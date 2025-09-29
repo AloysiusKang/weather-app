@@ -2,102 +2,156 @@ import Image from "next/image";
 
 export default function Home() {
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <>
+      <section className="cta">
+        <h1>How's the sky looking today?</h1>
+        <div>
+          <input type="text" name="" id="" />
+          <button type="button"></button>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+      </section>
+      <section className="main-weather">
+        <div className="weather-info">
+          <div className="weather-info__container">
+            <div className="">
+              <h2>Berlin, Germany</h2>
+              <p>Tuesday, Aug 5 2025</p>
+            </div>
+            <div className="weather-info__temp">
+              <img src="/assets/images/icon-sunny.webp" alt="" />
+              <p>20</p>
+            </div>
+          </div>
+          <div className="weather-info__small-container">
+            <p>Feels Like</p>
+            <p>18</p>
+          </div>
+          <div className="weather-info__small-container">
+            <p>Humidity</p>
+            <p>46%</p>
+          </div>
+          <div className="weather-info__small-container">
+            <p>Wind</p>
+            <p>14 km/h</p>
+          </div>
+          <div className="weather-info__small-container">
+            <p>Precipitation</p>
+            <p>0 mm</p>
+          </div>
+        </div>
+        <div className="daily-forecast">
+          <h2>Daily forecast</h2>
+          <div className="daily-forecast__content">
+            <div className="daily-forecast__container">
+              <p>Tue</p>
+              <img src="/assets/images/icon-storm.webp" alt="" />
+              <div className="daily-forecast__wrapper">
+                <p>20</p>
+                <p>14</p>
+              </div>
+            </div>
+            <div className="daily-forecast__container">
+              <p>Wed</p>
+              <img src="/assets/images/icon-storm.webp" alt="" />
+              <div className="daily-forecast__wrapper">
+                <p>21</p>
+                <p>15</p>
+              </div>
+            </div>
+            <div className="daily-forecast__container">
+              <p>Thu</p>
+              <img src="/assets/images/icon-storm.webp" alt="" />
+              <div className="daily-forecast__wrapper">
+                <p>24</p>
+                <p>14</p>
+              </div>
+            </div>
+            <div className="daily-forecast__container">
+              <p>Fri</p>
+              <img src="/assets/images/icon-storm.webp" alt="" />
+              <div className="daily-forecast__wrapper">
+                <p>25</p>
+                <p>13</p>
+              </div>
+            </div>
+            <div className="daily-forecast__container">
+              <p>Sat</p>
+              <img src="/assets/images/icon-storm.webp" alt="" />
+              <div className="daily-forecast__wrapper">
+                <p>21</p>
+                <p>15</p>
+              </div>
+            </div>
+            <div className="daily-forecast__container">
+              <p>Sun</p>
+              <img src="/assets/images/icon-storm.webp" alt="" />
+              <div className="daily-forecast__wrapper">
+                <p>25</p>
+                <p>16</p>
+              </div>
+            </div>
+            <div className="daily-forecast__container">
+              <p>Mon</p>
+              <img src="/assets/images/icon-storm.webp" alt="" />
+              <div className="daily-forecast__wrapper">
+                <p>24</p>
+                <p>15</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="hourly-forecast">
+          <div className="hourly-forecast__header">
+            <h2>Hourly forecast</h2>
+            <button type="button">
+              Tuesday 
+              <img src="/assets/images/icon-dropdown.svg" alt="" />
+            </button>
+          </div>
+          <div className="hourly-forecast__list">
+            <div className="hourly-forecast__container">
+              <img src="/assets/images/icon-snow.webp" alt="" />
+              <p>3 PM</p>
+              <p>20</p>
+            </div>
+            <div className="hourly-forecast__container">
+              <img src="/assets/images/icon-snow.webp" alt="" />
+              <p>4 PM</p>
+              <p>20</p>
+            </div>
+            <div className="hourly-forecast__container">
+              <img src="/assets/images/icon-snow.webp" alt="" />
+              <p>5 PM</p>
+              <p>20</p>
+            </div>
+            <div className="hourly-forecast__container">
+              <img src="/assets/images/icon-snow.webp" alt="" />
+              <p>6 PM</p>
+              <p>19</p>
+            </div>
+            <div className="hourly-forecast__container">
+              <img src="/assets/images/icon-snow.webp" alt="" />
+              <p>7 PM</p>
+              <p>18</p>
+            </div>
+            <div className="hourly-forecast__container">
+              <img src="/assets/images/icon-snow.webp" alt="" />
+              <p>8 PM</p>
+              <p>18</p>
+            </div>
+            <div className="hourly-forecast__container">
+              <img src="/assets/images/icon-snow.webp" alt="" />
+              <p>9 PM</p>
+              <p>17</p>
+            </div>
+            <div className="hourly-forecast__container">
+              <img src="/assets/images/icon-snow.webp" alt="" />
+              <p>10 PM</p>
+              <p>17</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </>
   );
 }
