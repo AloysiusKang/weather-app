@@ -24,22 +24,28 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <header>
-        <img src="/assets/images/logo.svg" alt="weather-now-logo" />
-        <button>
-          <img src="/assets/images/icon-units.svg" alt="unit-icon" />
-          Units
-          <img src="/assets/images/icon-dropdown.svg" alt="dropdown-icon" />
-        </button>
-      </header>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <header>
+          <img src="/assets/images/logo.svg" alt="weather-now-logo" />
+          <button>
+            <img src="/assets/images/icon-units.svg" alt="unit-icon" />
+            Units
+            <img src="/assets/images/icon-dropdown.svg" alt="dropdown-icon" />
+          </button>
+        </header>
         {children}
+        <footer>
+          <p>
+            This is a Frontend Mentor Project. Check them out{" "}
+            <a href="https://www.frontendmentor.io/challenges/weather-app-K1FhddVm49">
+              here
+            </a>{" "}
+            !
+          </p>
+        </footer>
       </body>
-      <footer>
-        <p>This is a Frontend Mentor Project. Check them out <a href="https://www.frontendmentor.io/challenges/weather-app-K1FhddVm49">here</a> !</p>
-      </footer>
     </html>
   );
 }
