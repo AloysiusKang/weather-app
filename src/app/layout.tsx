@@ -24,6 +24,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <title>Weather App</title>
+      <link rel="shortcut icon" href="/assets/images/favicon-32x32.png" type="image/x-icon" />
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
@@ -39,7 +41,7 @@ export default function RootLayout({
         <footer>
           <p>
             This is a Frontend Mentor Project. Check them out{" "}
-            <a href="https://www.frontendmentor.io/challenges/weather-app-K1FhddVm49">
+            <a style={{textDecoration: "underline"}} href="https://www.frontendmentor.io/challenges/weather-app-K1FhddVm49">
               here
             </a>{" "}
             !
