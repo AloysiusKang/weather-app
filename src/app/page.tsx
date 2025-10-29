@@ -15,8 +15,15 @@ type WeatherInfo = {
   weather_code: number;
 };
 
+type DailyForecast = {
+  day: string;
+  weather_code: number;
+  temperature_max: number;
+  temperature_min: number;
+};
+
 export default function Home() {
-  const params = {
+  const weatherInfoParams = {
     latitude: -6.1818,
     longitude: 106.8223,
     daily: "weather_code",
@@ -30,10 +37,18 @@ export default function Home() {
     timezone: "auto",
     forecast_days: 1,
   };
+  const dailyForecastParams = {
+    latitude: -6.1818,
+    longitude: 106.8223,
+    daily: ["weather_code", "temperature_2m_max", "temperature_2m_min"],
+    timezone: "auto",
+    forecast_days: 7
+  };
   const url = "https://api.open-meteo.com/v1/forecast";
 
   const locationParam: string = "medan";
   const [weatherInfo, setWeatherInfo] = useState<WeatherInfo>();
+  const [dailyForecast, setDailyForecast] = useState<DailyForecast[]>();
 
   // const getWeatherCode = (code:number) => {
   //   let weatherDescription:string = "";
@@ -61,8 +76,6 @@ export default function Home() {
 
   const getWeatherInfo = async (url: string, params: Object) => {
     const res = await fetchWeatherApi(url, params);
-
-    // Process first location. Add a for-loop for multiple locations or weather models
     const response = res[0];
     const utcOffsetSeconds = response.utcOffsetSeconds();
     const current = response.current()!;
@@ -70,7 +83,7 @@ export default function Home() {
     const currDate = new Date((Number(current.time()) + utcOffsetSeconds) * 1000);
     const weatherArray = daily.variables(0)!.valuesArray()
 
-    const weatherData : WeatherInfo = {
+    const weatherData: WeatherInfo = {
       current_date: format(currDate, "EEEE, MMM d yyyy"),
       temperature: Math.round(current.variables(0)!.value()),
       apparent_temperature: Math.round(current.variables(1)!.value()),
@@ -79,22 +92,39 @@ export default function Home() {
       precipitation: Math.round(current.variables(4)!.value() * 100) / 100,
       weather_code: weatherArray!["0"],
     };
-    // console.log(
-    //   `\nCurrent date: ${weatherData.current_date}`,
-    //   `\nCurrent temperature_2m: ${weatherData.temperature}`,
-    //   `\nCurrent apparent_temperature: ${weatherData.apparent_temperature}`,
-    //   `\nCurrent wind_speed_10m: ${weatherData.wind_speed}`,
-    //   `\nCurrent relative_humidity_2m: ${weatherData.relative_humidity}`,
-    //   `\nCurrent precipitation: ${weatherData.precipitation}`
-    // );
-    // console.log("\nDaily data", weatherData.weather_code);
 
     setWeatherInfo(weatherData)
   };
 
+  const getDailyForecast = async (url: string, params: Object) => {
+    const res = await fetchWeatherApi(url, params);
+    const response = res[0];
+    const daily = response.daily()!;
+
+    let dailyForecastData = [];
+    for (let index = 0; index < dailyForecastParams.forecast_days; index++) {
+      const currDate = new Date();
+      const forecastDay = new Date(currDate);
+      forecastDay.setDate(currDate.getDate() + index);
+
+      dailyForecastData.push({
+        day: format(forecastDay, "EEE"),
+        weather_code: daily.variables(0)!.valuesArray()![index],
+        temperature_max: Math.round(daily.variables(1)!.valuesArray()![index]),
+        temperature_min: Math.round(daily.variables(2)!.valuesArray()![index]),
+      });
+    };
+
+    setDailyForecast(dailyForecastData);
+
+    console.log(dailyForecastData);
+  };
+
   useEffect(() => {
-    getWeatherInfo(url, params);
-    return () => {};
+    getWeatherInfo(url, weatherInfoParams);
+    // getLocationInfo(locationParam);
+    getDailyForecast(url, dailyForecastParams);
+    return () => { };
   }, []);
 
   return (
@@ -145,62 +175,16 @@ export default function Home() {
       <section className="daily-forecast">
         <h2>Daily forecast</h2>
         <div className="daily-forecast__content">
-          <div className="daily-forecast__container">
-            <p className="text-preset-6">Tue</p>
-            <img src="/assets/images/icon-storm.webp" alt="" />
-            <div className="daily-forecast__wrapper text-preset-7">
-              <p>20</p>
-              <p>14</p>
+          {dailyForecast?.map((daily, index) => (
+            <div className="daily-forecast__container" key={index}>
+              <p className="text-preset-6">{daily.day}</p>
+              <img src="/assets/images/icon-storm.webp" alt="" />
+              <div className="daily-forecast__wrapper text-preset-7">
+                <p>{daily.temperature_max}</p>
+                <p>{daily.temperature_min}</p>
+              </div>
             </div>
-          </div>
-          <div className="daily-forecast__container">
-            <p className="text-preset-6">Wed</p>
-            <img src="/assets/images/icon-storm.webp" alt="" />
-            <div className="daily-forecast__wrapper text-preset-7">
-              <p>21</p>
-              <p>15</p>
-            </div>
-          </div>
-          <div className="daily-forecast__container">
-            <p className="text-preset-6">Thu</p>
-            <img src="/assets/images/icon-storm.webp" alt="" />
-            <div className="daily-forecast__wrapper text-preset-7">
-              <p>24</p>
-              <p>14</p>
-            </div>
-          </div>
-          <div className="daily-forecast__container">
-            <p className="text-preset-6">Fri</p>
-            <img src="/assets/images/icon-storm.webp" alt="" />
-            <div className="daily-forecast__wrapper text-preset-7">
-              <p>25</p>
-              <p>13</p>
-            </div>
-          </div>
-          <div className="daily-forecast__container">
-            <p className="text-preset-6">Sat</p>
-            <img src="/assets/images/icon-storm.webp" alt="" />
-            <div className="daily-forecast__wrapper text-preset-7">
-              <p>21</p>
-              <p>15</p>
-            </div>
-          </div>
-          <div className="daily-forecast__container">
-            <p className="text-preset-6">Sun</p>
-            <img src="/assets/images/icon-storm.webp" alt="" />
-            <div className="daily-forecast__wrapper">
-              <p>25</p>
-              <p>16</p>
-            </div>
-          </div>
-          <div className="daily-forecast__container">
-            <p className="text-preset-6">Mon</p>
-            <img src="/assets/images/icon-storm.webp" alt="" />
-            <div className="daily-forecast__wrapper text-preset-7">
-              <p>24</p>
-              <p>15</p>
-            </div>
-          </div>
+          ))}
         </div>
       </section>
       <section className="hourly-forecast">
