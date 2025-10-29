@@ -2,7 +2,8 @@
 
 import { fetchWeatherApi } from "openmeteo";
 import { useEffect, useState } from "react";
-import {format} from "date-fns";
+import { format } from "date-fns";
+import axios from "axios";
 
 type WeatherInfo = {
   current_date: string;
@@ -31,6 +32,7 @@ export default function Home() {
   };
   const url = "https://api.open-meteo.com/v1/forecast";
 
+  const locationParam: string = "medan";
   const [weatherInfo, setWeatherInfo] = useState<WeatherInfo>();
 
   // const getWeatherCode = (code:number) => {
@@ -47,6 +49,15 @@ export default function Home() {
 
   //   return weatherDescription;
   // }
+
+  // const searchLocation = async (params:string) => {
+  //   setLocationUrl(`https://geocoding-api.open-meteo.com/v1/search?name=${params}`);
+  // };
+
+  const getLocationInfo = async (params: string) => {
+    const res = await axios.get(`https://geocoding-api.open-meteo.com/v1/search?name=${params}`);
+    console.log(res.data.results);
+  };
 
   const getWeatherInfo = async (url: string, params: Object) => {
     const res = await fetchWeatherApi(url, params);
