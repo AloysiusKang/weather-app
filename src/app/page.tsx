@@ -22,6 +22,12 @@ type DailyForecast = {
   temperature_min: number;
 };
 
+type HourlyForecast = {
+  hour: Date;
+  weather_code: number;
+  temperature: number;
+};
+
 export default function Home() {
   const weatherInfoParams = {
     latitude: -6.1818,
@@ -42,13 +48,21 @@ export default function Home() {
     longitude: 106.8223,
     daily: ["weather_code", "temperature_2m_max", "temperature_2m_min"],
     timezone: "auto",
-    forecast_days: 7
+    forecast_days: 7,
+  };
+  const hourlyForecastParams = {
+    latitude: -6.1818,
+    longitude: 106.8223,
+    hourly: ["temperature_2m", "weather_code"],
+    timezone: "auto",
+    forecast_days: 1,
   };
   const url = "https://api.open-meteo.com/v1/forecast";
 
   const locationParam: string = "medan";
   const [weatherInfo, setWeatherInfo] = useState<WeatherInfo>();
   const [dailyForecast, setDailyForecast] = useState<DailyForecast[]>();
+  const [hourlyForecast, setHourlyForecast] = useState<HourlyForecast[]>();
 
   // const getWeatherCode = (code:number) => {
   //   let weatherDescription:string = "";
@@ -70,7 +84,9 @@ export default function Home() {
   // };
 
   const getLocationInfo = async (params: string) => {
-    const res = await axios.get(`https://geocoding-api.open-meteo.com/v1/search?name=${params}`);
+    const res = await axios.get(
+      `https://geocoding-api.open-meteo.com/v1/search?name=${params}`
+    );
     console.log(res.data.results);
   };
 
@@ -80,8 +96,10 @@ export default function Home() {
     const utcOffsetSeconds = response.utcOffsetSeconds();
     const current = response.current()!;
     const daily = response.daily()!;
-    const currDate = new Date((Number(current.time()) + utcOffsetSeconds) * 1000);
-    const weatherArray = daily.variables(0)!.valuesArray()
+    const currDate = new Date(
+      (Number(current.time()) + utcOffsetSeconds) * 1000
+    );
+    const weatherArray = daily.variables(0)!.valuesArray();
 
     const weatherData: WeatherInfo = {
       current_date: format(currDate, "EEEE, MMM d yyyy"),
@@ -93,7 +111,7 @@ export default function Home() {
       weather_code: weatherArray!["0"],
     };
 
-    setWeatherInfo(weatherData)
+    setWeatherInfo(weatherData);
   };
 
   const getDailyForecast = async (url: string, params: Object) => {
@@ -102,8 +120,8 @@ export default function Home() {
     const daily = response.daily()!;
 
     let dailyForecastData = [];
+    const currDate = new Date();
     for (let index = 0; index < dailyForecastParams.forecast_days; index++) {
-      const currDate = new Date();
       const forecastDay = new Date(currDate);
       forecastDay.setDate(currDate.getDate() + index);
 
@@ -113,18 +131,40 @@ export default function Home() {
         temperature_max: Math.round(daily.variables(1)!.valuesArray()![index]),
         temperature_min: Math.round(daily.variables(2)!.valuesArray()![index]),
       });
-    };
+    }
 
     setDailyForecast(dailyForecastData);
+    // console.log(dailyForecastData);
+  };
 
-    console.log(dailyForecastData);
+  const getHourlyForecast = async (url: string, params: Object) => {
+    const responses = await fetchWeatherApi(url, params);
+    const response = responses[0];
+    const hourly = response.hourly()!;
+    const currDate = new Date();
+    const lengthOfDate = new Date();
+    lengthOfDate.setHours(currDate.getHours() + 8)
+
+    let hourlyForecastData = [];
+    for (let index = currDate.getHours(); index < lengthOfDate.getHours(); index++) {
+      const forecastHour = {
+        hour: new Date((Number(hourly.time()) + index * hourly.interval()) * 1000),
+        temperature: Math.round(hourly.variables(0)!.valuesArray()![index]),
+        weather_code: hourly.variables(1)!.valuesArray()![index],
+      };
+      hourlyForecastData.push(forecastHour)
+    }
+
+    setHourlyForecast(hourlyForecastData);
+    // console.log("Hourly data", hourlyForecastData)
   };
 
   useEffect(() => {
     getWeatherInfo(url, weatherInfoParams);
     // getLocationInfo(locationParam);
     getDailyForecast(url, dailyForecastParams);
-    return () => { };
+    getHourlyForecast(url, hourlyForecastParams);
+    return () => {};
   }, []);
 
   return (
@@ -152,12 +192,12 @@ export default function Home() {
           </div>
           <div className="weather-info__temp">
             <img src="/assets/images/icon-sunny.webp" alt="" />
-            <p className="text-preset-1">{weatherInfo?.temperature}</p>
+            <p className="text-preset-1">{weatherInfo?.temperature}&deg;C</p>
           </div>
         </div>
         <div className="weather-info__small-container">
           <p className="text-preset-6">Feels Like</p>
-          <p className="text-preset-3">{weatherInfo?.apparent_temperature}</p>
+          <p className="text-preset-3">{weatherInfo?.apparent_temperature}&deg;C</p>
         </div>
         <div className="weather-info__small-container">
           <p className="text-preset-6">Humidity</p>
@@ -180,8 +220,8 @@ export default function Home() {
               <p className="text-preset-6">{daily.day}</p>
               <img src="/assets/images/icon-storm.webp" alt="" />
               <div className="daily-forecast__wrapper text-preset-7">
-                <p>{daily.temperature_max}</p>
-                <p>{daily.temperature_min}</p>
+                <p>{daily.temperature_max}&deg;C</p>
+                <p>{daily.temperature_min}&deg;C</p>
               </div>
             </div>
           ))}
@@ -195,46 +235,13 @@ export default function Home() {
             <img src="/assets/images/icon-dropdown.svg" alt="" />
           </button>
         </div>
-        <div className="hourly-forecast__container">
-          <img src="/assets/images/icon-snow.webp" alt="" />
-          <p>3 PM</p>
-          <p>20</p>
-        </div>
-        <div className="hourly-forecast__container">
-          <img src="/assets/images/icon-snow.webp" alt="" />
-          <p>4 PM</p>
-          <p>20</p>
-        </div>
-        <div className="hourly-forecast__container">
-          <img src="/assets/images/icon-snow.webp" alt="" />
-          <p>5 PM</p>
-          <p>20</p>
-        </div>
-        <div className="hourly-forecast__container">
-          <img src="/assets/images/icon-snow.webp" alt="" />
-          <p>6 PM</p>
-          <p>19</p>
-        </div>
-        <div className="hourly-forecast__container">
-          <img src="/assets/images/icon-snow.webp" alt="" />
-          <p>7 PM</p>
-          <p>18</p>
-        </div>
-        <div className="hourly-forecast__container">
-          <img src="/assets/images/icon-snow.webp" alt="" />
-          <p>8 PM</p>
-          <p>18</p>
-        </div>
-        <div className="hourly-forecast__container">
-          <img src="/assets/images/icon-snow.webp" alt="" />
-          <p>9 PM</p>
-          <p>17</p>
-        </div>
-        <div className="hourly-forecast__container">
-          <img src="/assets/images/icon-snow.webp" alt="" />
-          <p>10 PM</p>
-          <p>17</p>
-        </div>
+        {hourlyForecast?.map((hourly, index) => (
+          <div className="hourly-forecast__container" key={index}>
+            <img src="/assets/images/icon-snow.webp" alt="" />
+            <p>{format(hourly.hour, "hh aa")}</p>
+            <p>{hourly.temperature}&deg;C</p>
+          </div>
+        ))}
       </section>
     </section>
   );
