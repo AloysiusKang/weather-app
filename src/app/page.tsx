@@ -55,7 +55,8 @@ export default function Home() {
     longitude: 106.8223,
     hourly: ["temperature_2m", "weather_code"],
     timezone: "auto",
-    forecast_days: 1,
+    start_date: "",
+    end_date: ""
   };
   const url = "https://api.open-meteo.com/v1/forecast";
 
@@ -63,6 +64,16 @@ export default function Home() {
   const [weatherInfo, setWeatherInfo] = useState<WeatherInfo>();
   const [dailyForecast, setDailyForecast] = useState<DailyForecast[]>();
   const [hourlyForecast, setHourlyForecast] = useState<HourlyForecast[]>();
+  const [dropdownHourly, setDropdownHourly] = useState<string>("");
+  const week:Array<string> = [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday"
+  ]
 
   // const getWeatherCode = (code:number) => {
   //   let weatherDescription:string = "";
@@ -137,33 +148,69 @@ export default function Home() {
     // console.log(dailyForecastData);
   };
 
-  const getHourlyForecast = async (url: string, params: Object) => {
+  const getHourlyForecast = async (url: string, params: any, dayOfForecast:string) => {
+    setDropdownHourly(dayOfForecast);
+
+    // Get the date in which the user wants the hourly forecast of
+    const currDate = new Date();
+    for (let index = 0; index < 7; index++) {
+      const dateIntervals = new Date();
+      dateIntervals.setDate(currDate.getDate() + index);
+      if(format(dateIntervals, "cccc") === dayOfForecast){
+        params.start_date = format(dateIntervals, "yyyy-MM-dd");
+        params.end_date = format(dateIntervals, "yyyy-MM-dd");
+      }
+    }
+
     const responses = await fetchWeatherApi(url, params);
     const response = responses[0];
+
+    // Get the current hour and total hours shown in website (For now 8)
     const hourly = response.hourly()!;
-    const currDate = new Date();
-    const lengthOfDate = new Date();
-    lengthOfDate.setHours(currDate.getHours() + 8)
+    const currHour = new Date();
+    const hourIntervals = new Date();
+    hourIntervals.setHours(currHour.getHours() + 8);
 
     let hourlyForecastData = [];
-    for (let index = currDate.getHours(); index < lengthOfDate.getHours(); index++) {
+    for (
+      let index = currHour.getHours();
+      index < hourIntervals.getHours();
+      index++
+    ) {
       const forecastHour = {
-        hour: new Date((Number(hourly.time()) + index * hourly.interval()) * 1000),
+        hour: new Date(
+          (Number(hourly.time()) + index * hourly.interval()) * 1000
+        ),
         temperature: Math.round(hourly.variables(0)!.valuesArray()![index]),
         weather_code: hourly.variables(1)!.valuesArray()![index],
       };
-      hourlyForecastData.push(forecastHour)
+      hourlyForecastData.push(forecastHour);
     }
 
     setHourlyForecast(hourlyForecastData);
     // console.log("Hourly data", hourlyForecastData)
   };
 
+  const getDefaultHourlyForecast = async (url:string, params:any) => {
+    const today:string = format(new Date(), "cccc");
+    getHourlyForecast(url, params, today);
+  }
+  
+
+  const toggleDropdown = (elementClass: string) => {
+    let element = document.getElementById("hourly-forecast__dropdown");
+    if (element?.classList.contains("hide")) {
+      element.classList.remove("hide");
+    } else {
+      element?.classList.add("hide");
+    }
+  };
+
   useEffect(() => {
     getWeatherInfo(url, weatherInfoParams);
     // getLocationInfo(locationParam);
     getDailyForecast(url, dailyForecastParams);
-    getHourlyForecast(url, hourlyForecastParams);
+    getDefaultHourlyForecast(url, hourlyForecastParams);
     return () => {};
   }, []);
 
@@ -197,7 +244,9 @@ export default function Home() {
         </div>
         <div className="weather-info__small-container">
           <p className="text-preset-6">Feels Like</p>
-          <p className="text-preset-3">{weatherInfo?.apparent_temperature}&deg;C</p>
+          <p className="text-preset-3">
+            {weatherInfo?.apparent_temperature}&deg;C
+          </p>
         </div>
         <div className="weather-info__small-container">
           <p className="text-preset-6">Humidity</p>
@@ -220,8 +269,8 @@ export default function Home() {
               <p className="text-preset-6">{daily.day}</p>
               <img src="/assets/images/icon-storm.webp" alt="" />
               <div className="daily-forecast__wrapper text-preset-7">
-                <p>{daily.temperature_max}&deg;C</p>
                 <p>{daily.temperature_min}&deg;C</p>
+                <p>{daily.temperature_max}&deg;C</p>
               </div>
             </div>
           ))}
@@ -230,10 +279,27 @@ export default function Home() {
       <section className="hourly-forecast">
         <div className="hourly-forecast__header">
           <h2 className="text-preset-5">Hourly forecast</h2>
-          <button type="button" className="text-preset-7 btn-dropdown">
-            Tuesday
+          <div className="hourly-forecast__dropdown">
+            <button
+              type="button"
+              className="text-preset-7 btn-dropdown"
+              onClick={() => toggleDropdown("hourly-forecast__dropdown")}
+            >
+              {dropdownHourly}
             <img src="/assets/images/icon-dropdown.svg" alt="" />
           </button>
+            <div
+              id="hourly-forecast__dropdown"
+              className="hourly-forecast__dropdown-content text-preset-7 hide"
+            >
+              {week.map((day, index) => (
+              <p onClick={() => {
+                toggleDropdown("hourly-forecast__dropdown");
+                  return getHourlyForecast(url, hourlyForecastParams, day);
+                }} className={day === dropdownHourly ? "hourly-forecast__dropdown-active" : ""} key={index}>{day}</p>
+              ))}
+            </div>
+          </div>
         </div>
         {hourlyForecast?.map((hourly, index) => (
           <div className="hourly-forecast__container" key={index}>
