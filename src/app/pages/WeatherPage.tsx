@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { format } from "date-fns";
 import axios from "axios";
 import { UnitSettingsContext, UnitSettingsContextType } from "../context/UnitSettingsContext";
+import commonConstant from "../common-constant.json"
 
 type WeatherInfo = {
   current_date: string;
@@ -173,20 +174,18 @@ export default function WeatherPage() {
         params.end_date = format(dateIntervals, "yyyy-MM-dd");
       }
     }
-
     const responses = await fetchWeatherApi(url, params);
     const response = responses[0];
 
     // Get the current hour and total hours shown in website (For now 8)
     const hourly = response.hourly()!;
     const currHour = new Date();
-    const hourIntervals = new Date();
-    hourIntervals.setHours(currHour.getHours() + 8);
 
     let hourlyForecastData = [];
+
     for (
       let index = currHour.getHours();
-      index < hourIntervals.getHours();
+      index < (currHour.getHours() + commonConstant.INTERVAL_HOURLY);
       index++
     ) {
       const forecastHour = {
@@ -198,7 +197,7 @@ export default function WeatherPage() {
       };
       hourlyForecastData.push(forecastHour);
     }
-
+    console.log(hourlyForecastData)
     setHourlyForecast(hourlyForecastData);
     // console.log("Hourly data", hourlyForecastData)
   };
