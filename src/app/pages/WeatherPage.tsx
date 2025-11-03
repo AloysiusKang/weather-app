@@ -31,12 +31,15 @@ type HourlyForecast = {
 };
 
 export default function WeatherPage() {
-  const unitSettingsContext:UnitSettingsContextType = useContext(UnitSettingsContext);
+  const {unitSettings, setUnitSettingsContext}:UnitSettingsContextType = useContext(UnitSettingsContext);
   // console.log(unitSettingsContext)
   const weatherInfoParams = {
     latitude: -6.1818,
     longitude: 106.8223,
     daily: "weather_code",
+    temperature_unit: unitSettings.temperature,
+    wind_speed_unit: unitSettings.wind_speed,
+    precipitation_unit: unitSettings.precipitation,
     current: [
       "temperature_2m",
       "apparent_temperature",
@@ -50,6 +53,9 @@ export default function WeatherPage() {
   const dailyForecastParams = {
     latitude: -6.1818,
     longitude: 106.8223,
+    temperature_unit: unitSettings.temperature,
+    wind_speed_unit: unitSettings.wind_speed,
+    precipitation_unit: unitSettings.precipitation,
     daily: ["weather_code", "temperature_2m_max", "temperature_2m_min"],
     timezone: "auto",
     forecast_days: 7,
@@ -57,6 +63,9 @@ export default function WeatherPage() {
   const hourlyForecastParams = {
     latitude: -6.1818,
     longitude: 106.8223,
+    temperature_unit: unitSettings.temperature,
+    wind_speed_unit: unitSettings.wind_speed,
+    precipitation_unit: unitSettings.precipitation,
     hourly: ["temperature_2m", "weather_code"],
     timezone: "auto",
     start_date: "",
@@ -216,13 +225,23 @@ export default function WeatherPage() {
     }
   };
 
+  // For when any units are changed
+  useEffect(() => {
+    getWeatherInfo(url, weatherInfoParams);
+    getDailyForecast(url, dailyForecastParams);
+    getHourlyForecast(url, hourlyForecastParams, dropdownHourly);
+    return () => {};
+  }, [unitSettings])
+
+
+  // Init
   useEffect(() => {
     getWeatherInfo(url, weatherInfoParams);
     // getLocationInfo(locationParam);
     getDailyForecast(url, dailyForecastParams);
     getDefaultHourlyForecast(url, hourlyForecastParams);
     return () => {};
-  }, []);
+  }, []);  
 
   return (
     <section className="home">
@@ -249,13 +268,13 @@ export default function WeatherPage() {
           </div>
           <div className="weather-info__temp">
             <img src="/assets/images/icon-sunny.webp" alt="" />
-            <p className="text-preset-1">{weatherInfo?.temperature}&deg;C</p>
+            <p className="text-preset-1">{weatherInfo?.temperature}&deg;</p>
           </div>
         </div>
         <div className="weather-info__small-container">
           <p className="text-preset-6">Feels Like</p>
           <p className="text-preset-3">
-            {weatherInfo?.apparent_temperature}&deg;C
+            {weatherInfo?.apparent_temperature}&deg;
           </p>
         </div>
         <div className="weather-info__small-container">
@@ -264,11 +283,11 @@ export default function WeatherPage() {
         </div>
         <div className="weather-info__small-container">
           <p className="text-preset-6">Wind</p>
-          <p className="text-preset-3">{weatherInfo?.wind_speed} km/h</p>
+          <p className="text-preset-3">{weatherInfo?.wind_speed} {unitSettings.wind_speed === commonConstant.WINDSPEED_KM ? "km/h" : "mph"}</p>
         </div>
         <div className="weather-info__small-container">
           <p className="text-preset-6">Precipitation</p>
-          <p className="text-preset-3">{weatherInfo?.precipitation} mm</p>
+          <p className="text-preset-3">{weatherInfo?.precipitation} {unitSettings.precipitation === commonConstant.PRECIPITATION_MM ? "mm" : "in"}</p>
         </div>
       </section>
       <section className="daily-forecast">
