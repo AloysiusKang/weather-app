@@ -25,28 +25,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <title>Weather App</title>
-      <link rel="shortcut icon" href="/assets/images/favicon-32x32.png" type="image/x-icon" />
+      <link
+        rel="shortcut icon"
+        href="/assets/images/favicon-32x32.png"
+        type="image/x-icon"
+      />
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <header>
-          <img src="/assets/images/logo.svg" alt="weather-now-logo" />
-          <button>
-            <img src="/assets/images/icon-units.svg" alt="unit-icon" />
-            Units
-            <img src="/assets/images/icon-dropdown.svg" alt="dropdown-icon" />
-          </button>
-        </header>
         {children}
-        <footer>
-          <p>
-            This is a Frontend Mentor Project. Check them out{" "}
-            <a style={{textDecoration: "underline"}} href="https://www.frontendmentor.io/challenges/weather-app-K1FhddVm49">
-              here
-            </a>{" "}
-            !
-          </p>
-        </footer>
       </body>
     </html>
   );
