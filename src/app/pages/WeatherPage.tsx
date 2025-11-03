@@ -191,13 +191,20 @@ export default function WeatherPage() {
 
     // Get the current hour and total hours shown in website (For now 8)
     const hourly = response.hourly()!;
-    const currHour = new Date();
-
     let hourlyForecastData = [];
+    let hourlyIntervalStart:number = new Date().getHours();
+    let hourlyIntervalEnd:number = hourlyIntervalStart + commonConstant.INTERVAL_HOURLY;
+
+    // Check if the hour forecast exceeds the day
+    if(hourlyIntervalEnd > 24){
+      const offset = hourlyIntervalEnd - 24;
+      hourlyIntervalStart -= offset;
+      hourlyIntervalEnd -= offset;
+    }
 
     for (
-      let index = currHour.getHours();
-      index < (currHour.getHours() + commonConstant.INTERVAL_HOURLY);
+      let index = hourlyIntervalStart;
+      index < hourlyIntervalEnd;
       index++
     ) {
       const forecastHour = {
