@@ -77,7 +77,10 @@ export default function WeatherPage() {
   const [weatherInfo, setWeatherInfo] = useState<WeatherInfo>();
   const [dailyForecast, setDailyForecast] = useState<DailyForecast[]>();
   const [hourlyForecast, setHourlyForecast] = useState<HourlyForecast[]>();
-  const [dropdownHourly, setDropdownHourly] = useState<string>("");
+  const [dropdownHourly, setDropdownHourly] = useState({
+    day_of_forecast: "",
+    is_dropdown_hidden: true
+  });
   const week: Array<string> = [
     "Monday",
     "Tuesday",
@@ -171,7 +174,7 @@ export default function WeatherPage() {
     params: any,
     dayOfForecast: string
   ) => {
-    setDropdownHourly(dayOfForecast);
+    setDropdownHourly((oldDropdown) => ({...oldDropdown, day_of_forecast: dayOfForecast}));
 
     // Get the date in which the user wants the hourly forecast of
     const currDate = new Date();
@@ -206,7 +209,6 @@ export default function WeatherPage() {
       };
       hourlyForecastData.push(forecastHour);
     }
-    console.log(hourlyForecastData)
     setHourlyForecast(hourlyForecastData);
     // console.log("Hourly data", hourlyForecastData)
   };
@@ -216,20 +218,27 @@ export default function WeatherPage() {
     getHourlyForecast(url, params, today);
   };
 
-  const toggleDropdown = (elementClass: string) => {
-    let element = document.getElementById("hourly-forecast__dropdown");
-    if (element?.classList.contains("hide")) {
-      element.classList.remove("hide");
-    } else {
-      element?.classList.add("hide");
-    }
+  const toggleDropdown = () => {
+    setDropdownHourly((oldDropdown) => {
+      if(oldDropdown.is_dropdown_hidden){
+        return ({
+          ...oldDropdown,
+          is_dropdown_hidden: false
+        })
+      }else{
+        return ({
+          ...oldDropdown,
+          is_dropdown_hidden: true
+        })
+      }
+    })
   };
 
   // For when any units are changed
   useEffect(() => {
     getWeatherInfo(url, weatherInfoParams);
     getDailyForecast(url, dailyForecastParams);
-    getHourlyForecast(url, hourlyForecastParams, dropdownHourly);
+    getHourlyForecast(url, hourlyForecastParams, dropdownHourly.day_of_forecast);
     return () => {};
   }, [unitSettings])
 
@@ -312,23 +321,23 @@ export default function WeatherPage() {
             <button
               type="button"
               className="text-preset-7 btn-dropdown"
-              onClick={() => toggleDropdown("hourly-forecast__dropdown")}
+              onClick={() => toggleDropdown()}
             >
-              {dropdownHourly}
+              {dropdownHourly.day_of_forecast}
               <img src="/assets/images/icon-dropdown.svg" alt="" />
             </button>
             <div
               id="hourly-forecast__dropdown"
-              className="hourly-forecast__dropdown-content text-preset-7 hide"
+              className={`hourly-forecast__dropdown-content text-preset-7 ${dropdownHourly.is_dropdown_hidden && "hide"}`}
             >
               {week.map((day, index) => (
                 <p
                   onClick={() => {
-                    toggleDropdown("hourly-forecast__dropdown");
+                    toggleDropdown();
                     return getHourlyForecast(url, hourlyForecastParams, day);
                   }}
                   className={
-                    day === dropdownHourly
+                    day === dropdownHourly.day_of_forecast
                       ? "hourly-forecast__dropdown-active"
                       : ""
                   }
