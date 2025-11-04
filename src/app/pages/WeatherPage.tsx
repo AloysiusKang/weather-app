@@ -241,6 +241,34 @@ export default function WeatherPage() {
     })
   };
 
+  const weatherCode = (weather:number):string => {
+    if(commonConstant.WC_SUNNY.includes(weather)){
+      return "/assets/images/icon-sunny.webp"
+    }
+    if(commonConstant.WC_PARTLY_CLOUDY.includes(weather)){
+      return "/assets/images/icon-partly-cloudy.webp"
+    }
+    if(commonConstant.WC_OVERCAST.includes(weather)){
+      return "/assets/images/icon-overcast.webp"
+    }
+    if(commonConstant.WC_FOG.includes(weather)){
+      return "/assets/images/icon-drizzle.webp"
+    }
+    if(commonConstant.WC_DRIZZLE.includes(weather)){
+      return "/assets/images/icon-sunny.webp"
+    }
+    if(commonConstant.WC_RAIN.includes(weather)){
+      return "/assets/images/icon-rain.webp"
+    }
+    if(commonConstant.WC_SNOW.includes(weather)){
+      return "/assets/images/icon-snow.webp"
+    }
+    if(commonConstant.WC_STORM.includes(weather)){
+      return "/assets/images/icon-storm.webp"
+    }
+    return "/assets/images/icon-error.svg";
+  }
+
   // For when any units are changed
   useEffect(() => {
     getWeatherInfo(url, weatherInfoParams);
@@ -312,7 +340,7 @@ export default function WeatherPage() {
           {dailyForecast?.map((daily, index) => (
             <div className="daily-forecast__container" key={index}>
               <p className="text-preset-6">{daily.day}</p>
-              <img src="/assets/images/icon-storm.webp" alt="" />
+              <img src={weatherCode(daily.weather_code)} alt="" />
               <div className="daily-forecast__wrapper text-preset-7">
                 <p>{daily.temperature_min}&deg;C</p>
                 <p>{daily.temperature_max}&deg;C</p>
@@ -358,7 +386,7 @@ export default function WeatherPage() {
         </div>
         {hourlyForecast?.map((hourly, index) => (
           <div className="hourly-forecast__container" key={index}>
-            <img src="/assets/images/icon-snow.webp" alt="" />
+            <img src={weatherCode(hourly.weather_code)} alt="" />
             <p>{format(hourly.hour, "hh aa")}</p>
             <p>{hourly.temperature}&deg;C</p>
           </div>

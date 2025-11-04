@@ -7,5 +7,13 @@
     "PRECIPITATION_INCHES": "inch",
     "TOGGLE_IMPERIAL": "IMPERIAL",
     "TOGGLE_METRIC": "METRIC",
-    "INTERVAL_HOURLY": 8
+    "INTERVAL_HOURLY": 8,
+    "WC_SUNNY": [0],
+    "WC_PARTLY_CLOUDY": [1,2],
+    "WC_OVERCAST": [3],
+    "WC_FOG": [45,48],
+    "WC_DRIZZLE": [51,53,55,56,57],
+    "WC_RAIN": [61,63,65,80,81,82],
+    "WC_SNOW": [71,73,75,77,85,86],
+    "WC_STORM": [95,96,99]
 }
