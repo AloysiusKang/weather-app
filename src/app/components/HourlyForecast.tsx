@@ -33,15 +33,7 @@ export default function HourlyForecast() {
         day_of_forecast: "",
         is_dropdown_hidden: true
     });
-    const week: Array<string> = [
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday",
-        "Sunday",
-    ];
+    const week: Array<string> = commonConstant.DROPDOWN_WEEK;
 
     const getHourlyForecast = async (
         url: string,

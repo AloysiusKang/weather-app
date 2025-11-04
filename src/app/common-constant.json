@@ -16,5 +16,14 @@
     "WC_RAIN": [61,63,65,80,81,82],
     "WC_SNOW": [71,73,75,77,85,86],
     "WC_STORM": [95,96,99],
-    "OPEN_API_URL": "https://api.open-meteo.com/v1/forecast"
+    "OPEN_API_URL": "https://api.open-meteo.com/v1/forecast",
+    "DROPDOWN_WEEK": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+        "Sunday"
+    ]
 }
