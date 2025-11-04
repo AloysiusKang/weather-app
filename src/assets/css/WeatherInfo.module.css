@@ -1,0 +1,32 @@
+.weather-info{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(175px, 1fr));
+  gap: 1.5rem;
+  grid-area: info;
+}
+
+.weather-info__container{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5rem 1rem;
+  background-image: url(/assets/images/bg-today-large.svg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  border-radius: 1.25rem;
+  gap: 1rem;
+}
+.weather-info__temp{
+  display: flex;
+  align-items: center;
+}
+.weather-info__temp > img{
+  max-width: 120px;
+}
+.weather-info__small-container{
+  padding: 1.25rem;
+  background-color: var(--clr-neutral-800);
+  border: 1px solid var(--clr-neutral-600);
+  border-radius: 0.75rem;
+  color: var(--clr-neutral-200);
+}

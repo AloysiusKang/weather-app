@@ -1,0 +1,28 @@
+.daily-forecast{
+  display: grid;
+  gap: 1.25rem;
+  grid-area: daily;
+}
+
+.daily-forecast__content{
+  display: grid;
+  grid-template-columns: repeat( auto-fit, minmax(100px, 1fr));
+  gap: 1rem;
+}
+
+.daily-forecast__container{
+  padding: 1rem 0.625rem;
+  width: 100%;
+  background-color: var(--clr-neutral-800);
+  border: 1px solid var(--clr-neutral-600);
+  border-radius: 0.75rem;
+  text-align: center;
+}
+.daily-forecast__container > img{
+  max-width: 60px;
+  margin-inline: auto;
+}
+.daily-forecast__wrapper{
+  display: flex;
+  justify-content: space-between;
+}
