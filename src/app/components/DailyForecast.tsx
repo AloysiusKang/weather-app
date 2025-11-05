@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import {
   UnitSettingsContext,
   UnitSettingsContextType,
@@ -8,6 +8,7 @@ import { format } from "date-fns";
 import { weatherCode } from "../utility/weather-code";
 import commonConstant from "../common-constant.json"
 import styles from "../../assets/css/DailyForecast.module.css";
+import { Location } from "./WeatherSearch";
 
 type DailyForecast = {
   day: string;
@@ -16,14 +17,19 @@ type DailyForecast = {
   temperature_min: number;
 };
 
-export default function DailyForecast() {
+type DailyForecastProps = {
+  location:Location
+}
+
+export default function DailyForecast({location}:DailyForecastProps) {
   const url = commonConstant.OPEN_API_URL;
+  const hasPageRenderedOnce = useRef<Boolean>(false);
   const { unitSettings, setUnitSettingsContext }: UnitSettingsContextType =
     useContext(UnitSettingsContext);
   const [dailyForecast, setDailyForecast] = useState<DailyForecast[]>();
   const dailyForecastParams = {
-    latitude: -6.1818,
-    longitude: 106.8223,
+    latitude: location.latitude,
+    longitude: location.longitude,
     temperature_unit: unitSettings.temperature,
     wind_speed_unit: unitSettings.wind_speed,
     precipitation_unit: unitSettings.precipitation,
@@ -32,8 +38,8 @@ export default function DailyForecast() {
     forecast_days: 7,
   };
 
-  const getDailyForecast = async (url: string, params: Object) => {
-    const res = await fetchWeatherApi(url, params);
+  const getDailyForecast = async (url: string) => {
+    const res = await fetchWeatherApi(url, dailyForecastParams);
     const response = res[0];
     const daily = response.daily()!;
 
@@ -57,13 +63,23 @@ export default function DailyForecast() {
 
   // For when any units are changed
   useEffect(() => {
-    getDailyForecast(url, dailyForecastParams);
+    if(hasPageRenderedOnce.current){
+      getDailyForecast(url);
+    }
     return () => {};
   }, [unitSettings]);
 
+  useEffect(() => {
+    if(hasPageRenderedOnce.current){
+      getDailyForecast(url);
+    }  
+    return () => {};
+  }, [location]);
+
   // Init
   useEffect(() => {
-    getDailyForecast(url, dailyForecastParams);
+    hasPageRenderedOnce.current = true;
+    getDailyForecast(url);
     return () => {};
   }, []);
 

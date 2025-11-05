@@ -1,10 +1,11 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import { weatherCode } from "../utility/weather-code";
 import { UnitSettingsContext, UnitSettingsContextType } from '../context/UnitSettingsContext';
 import { format } from 'date-fns';
 import { fetchWeatherApi } from 'openmeteo';
 import commonConstant from "../common-constant.json"
 import styles from "../../assets/css/HourlyForecast.module.css"
+import { Location } from './WeatherSearch';
 
 type HourlyForecast = {
   hour: Date;
@@ -12,13 +13,18 @@ type HourlyForecast = {
   temperature: number;
 };
 
-export default function HourlyForecast() {
+type HourlyForecastProps = {
+    location:Location
+}
+
+export default function HourlyForecast({location}:HourlyForecastProps) {
     const url = commonConstant.OPEN_API_URL;
+    const hasPageRenderedOnce = useRef<Boolean>(false);
     const {unitSettings, setUnitSettingsContext}:UnitSettingsContextType = useContext(UnitSettingsContext);
     const [hourlyForecast, setHourlyForecast] = useState<HourlyForecast[]>();
     const hourlyForecastParams = {
-        latitude: -6.1818,
-        longitude: 106.8223,
+        latitude: location.latitude,
+        longitude: location.longitude,
         temperature_unit: unitSettings.temperature,
         wind_speed_unit: unitSettings.wind_speed,
         precipitation_unit: unitSettings.precipitation,
@@ -37,7 +43,6 @@ export default function HourlyForecast() {
 
     const getHourlyForecast = async (
         url: string,
-        params: any,
         dayOfForecast: string
     ) => {
         setDropdownHourly((oldDropdown) => ({...oldDropdown, day_of_forecast: dayOfForecast}));
@@ -48,11 +53,11 @@ export default function HourlyForecast() {
         const dateIntervals = new Date();
         dateIntervals.setDate(currDate.getDate() + index);
         if (format(dateIntervals, "cccc") === dayOfForecast) {
-            params.start_date = format(dateIntervals, "yyyy-MM-dd");
-            params.end_date = format(dateIntervals, "yyyy-MM-dd");
+            hourlyForecastParams.start_date = format(dateIntervals, "yyyy-MM-dd");
+            hourlyForecastParams.end_date = format(dateIntervals, "yyyy-MM-dd");
         }
         }
-        const responses = await fetchWeatherApi(url, params);
+        const responses = await fetchWeatherApi(url, hourlyForecastParams);
         const response = responses[0];
 
         // Get the current hour and total hours shown in website (For now 8)
@@ -63,9 +68,9 @@ export default function HourlyForecast() {
 
         // Check if the hour forecast exceeds the day
         if(hourlyIntervalEnd > 24){
-        const offset = hourlyIntervalEnd - 24;
-        hourlyIntervalStart -= offset;
-        hourlyIntervalEnd -= offset;
+            const offset = hourlyIntervalEnd - 24;
+            hourlyIntervalStart -= offset;
+            hourlyIntervalEnd -= offset;
         }
 
         for (
@@ -86,9 +91,9 @@ export default function HourlyForecast() {
         // console.log("Hourly data", hourlyForecastData)
     };
 
-    const getDefaultHourlyForecast = async (url: string, params: any) => {
+    const getDefaultHourlyForecast = async (url: string) => {
         const today: string = format(new Date(), "cccc");
-        getHourlyForecast(url, params, today);
+        getHourlyForecast(url, today);
         };
     
         const toggleDropdown = () => {
@@ -109,14 +114,23 @@ export default function HourlyForecast() {
 
     // For when any units are changed
     useEffect(() => {
-        getHourlyForecast(url, hourlyForecastParams, dropdownHourly.day_of_forecast);
+        if(hasPageRenderedOnce.current){
+            getHourlyForecast(url, dropdownHourly.day_of_forecast);
+        }
         return () => {};
     }, [unitSettings])
 
+    useEffect(() => {
+        if(hasPageRenderedOnce.current){
+            getDefaultHourlyForecast(url);
+        }  
+        return () => {};
+    }, [location]);
 
     // Init
     useEffect(() => {
-        getDefaultHourlyForecast(url, hourlyForecastParams);
+        hasPageRenderedOnce.current = true;
+        getDefaultHourlyForecast(url);
         return () => {};
     }, []);
 
@@ -141,7 +155,7 @@ export default function HourlyForecast() {
                 <p
                     onClick={() => {
                     toggleDropdown();
-                    return getHourlyForecast(url, hourlyForecastParams, day);
+                    return getHourlyForecast(url, day);
                     }}
                     className={ day === dropdownHourly.day_of_forecast ? (styles["hourly-forecast__dropdown-active"]) : ""}
                     key={index}

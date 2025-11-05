@@ -1,13 +1,23 @@
 .cta{
-  text-align: center;
-  display: grid;
-  gap: 3rem;
   grid-area: cta;
+  text-align: center;
+  margin-inline: auto;
+}
+
+.cta__form{
+  display: grid;
+  gap: 3rem .5rem;
+  grid-template-columns: 1fr auto;
+}
+
+.cta__form > h1{
+  grid-column: 1 / -1;
 }
 
 .cta__search-bar{
+  position: relative;
   display: flex;
-  gap: 1rem;
+  gap: .5rem;
   max-width: 650px;
   margin-inline: auto;
   width: 100%;
@@ -22,4 +32,25 @@
 }
 .cta__search-bar > input::placeholder{
   color: var(--clr-neutral-200);
+}
+
+.cta__options{
+  position: absolute;
+  display: grid;
+  gap: .5rem;
+  top: calc(100% + .5rem);
+  width: 100%;
+  background-color: var(--clr-neutral-800);
+  border-radius: .75rem;
+  padding: .5rem;
+  text-align: left;
+  cursor: pointer;
+}
+.cta__options > p{
+  padding: .5rem;
+  border-radius: .5rem;
+}
+.cta__options > p:hover{
+  background-color: var(--clr-neutral-700);
+  border: 1px solid var(--clr-neutral-600);
 }

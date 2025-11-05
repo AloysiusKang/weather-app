@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import {
   UnitSettingsContext,
   UnitSettingsContextType,
@@ -8,6 +8,7 @@ import { format } from "date-fns";
 import commonConstant from "../common-constant.json";
 import { weatherCode } from "../utility/weather-code";
 import styles from "../../assets/css/WeatherInfo.module.css";
+import { Location } from "./WeatherSearch";
 
 type WeatherInfo = {
   current_date: string;
@@ -19,13 +20,19 @@ type WeatherInfo = {
   weather_code: number;
 };
 
-export default function WeatherInfo() {
+type WeatherInfoProps = {
+  location:Location,
+}
+
+export default function WeatherInfo({location}:WeatherInfoProps) {
   const url = commonConstant.OPEN_API_URL;
   const { unitSettings, setUnitSettingsContext }: UnitSettingsContextType =
     useContext(UnitSettingsContext);
-  const weatherInfoParams = {
-    latitude: -6.1818,
-    longitude: 106.8223,
+  let hasPageRenderedOnce = useRef<boolean>(false);
+
+  let weatherInfoParams = {
+    latitude: location.latitude,
+    longitude: location.longitude,
     daily: "weather_code",
     temperature_unit: unitSettings.temperature,
     wind_speed_unit: unitSettings.wind_speed,
@@ -39,7 +46,8 @@ export default function WeatherInfo() {
     ],
     timezone: "auto",
     forecast_days: 1,
-  };
+  }
+
   const [weatherInfo, setWeatherInfo] = useState<WeatherInfo>({
     current_date: "",
     temperature: 0,
@@ -50,8 +58,8 @@ export default function WeatherInfo() {
     weather_code: 0,
   });
 
-  const getWeatherInfo = async (url: string, params: Object) => {
-    const res = await fetchWeatherApi(url, params);
+  const getWeatherInfo = async (url: string) => {
+    const res = await fetchWeatherApi(url, weatherInfoParams);
     const response = res[0];
     const utcOffsetSeconds = response.utcOffsetSeconds();
     const current = response.current()!;
@@ -70,19 +78,30 @@ export default function WeatherInfo() {
       precipitation: Math.round(current.variables(4)!.value() * 100) / 100,
       weather_code: weatherArray!["0"],
     };
-
     setWeatherInfo(weatherData);
   };
 
   // For when any units are changed
   useEffect(() => {
-    getWeatherInfo(url, weatherInfoParams);
+    console.log(hasPageRenderedOnce)
+    if(hasPageRenderedOnce.current){
+      getWeatherInfo(url);
+    }
     return () => {};
   }, [unitSettings]);
-
+  
+  useEffect(() => {
+    if(hasPageRenderedOnce.current){
+      getWeatherInfo(url);
+    }  
+    return () => {};
+  }, [location]);
+  
   // Init
   useEffect(() => {
-    getWeatherInfo(url, weatherInfoParams);
+    hasPageRenderedOnce.current = true;
+    console.log(hasPageRenderedOnce)
+    getWeatherInfo(url);
     return () => {};
   }, []);
 
@@ -90,7 +109,7 @@ export default function WeatherInfo() {
     <section className={styles["weather-info"]}>
       <div className={`${styles["weather-info__container"]} col-span-full`}>
         <div className="">
-          <h2 className="text-preset-4">Jakarta, Indonesia</h2>
+          <h2 className="text-preset-4">{location.name}, {location.country}</h2>
           <p className="text-preset-6">{weatherInfo.current_date}</p>
         </div>
         <div className={styles["weather-info__temp"]}>
