@@ -223,7 +223,7 @@ header{
 }
 .unit-dropdown__content{
   position: absolute;
-  top: 100%;
+  top: calc(100% + .5rem);
   right: 0;
   display: grid;
   gap: .5rem;
