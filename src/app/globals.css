@@ -209,6 +209,20 @@ header{
   margin: 1rem 2rem;
   justify-content: space-between;
 }
+
+.nav{
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+}
+.nav__link{
+  border-bottom: 2px solid transparent;
+  transition: border 150ms ease;
+}
+.nav__link:hover {
+  border-bottom: 2px solid var(--clr-neutral-000);
+}
+
 .unit-dropdown__btn{
   display: grid;
   grid-template-columns: auto 1fr auto;
@@ -281,5 +295,27 @@ footer a{
   transition: opacity 150ms ease, visibility 0ms 1s !important;
 }
 
+.home{
+  display: grid;
+  margin-inline: 7rem;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-areas: 
+    'cta cta cta'
+    'info info hourly'
+    'daily daily hourly'
+  ;
+  gap: 2rem;
+}
 
-
+@media (max-width: 900px) {
+  .home{
+    grid-template-areas: 
+      'cta'
+      'info'
+      'daily'
+      'hourly'
+    ;
+    grid-template-columns: 1fr;
+    margin-inline: 2rem;
+  }
+}

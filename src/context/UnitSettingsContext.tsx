@@ -1,4 +1,4 @@
-import {createContext} from "react";
+import {createContext, ReactNode, useState} from "react";
 import commonConstant from "../common-constant.json";
 
 export type UnitSettings = {
@@ -20,3 +20,20 @@ export const UnitSettingsContext = createContext<UnitSettingsContextType>({
   },
   setUnitSettingsContext: () => {}
 });
+
+export function UnitSettingsProvider({children}: {children: ReactNode}){
+  const [unitSettings, setUnitSettings] = useState<UnitSettings>({
+    temperature: commonConstant.TEMPERATURE_CELSIUS,
+    wind_speed: commonConstant.WINDSPEED_KM,
+    precipitation: commonConstant.PRECIPITATION_MM,
+  });
+
+  return (
+    <UnitSettingsContext.Provider value={{
+      unitSettings: unitSettings,
+      setUnitSettingsContext: setUnitSettings,
+    }}>
+      {children}
+    </UnitSettingsContext.Provider>
+  )
+}

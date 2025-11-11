@@ -1,7 +1,6 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
-import styles from "../../assets/css/WeatherSearch.module.css";
-import { count } from "console";
+import React, { useContext, useEffect, useState } from "react";
+import styles from "../assets/css/WeatherSearch.module.css";
 
 export type Location = {
   country: string;
@@ -47,7 +46,7 @@ export default function WeatherSearch({setLocation}:WeatherSearchProps) {
   };
 
   const setupWeatherLocation = async (l:Location) => {
-    setLocation(l)
+    setLocation(l);
     setLocationInput((e) => ({...e, is_hidden: true}))
   }
 

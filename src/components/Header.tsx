@@ -4,6 +4,7 @@ import {
   UnitSettingsContextType,
 } from "../context/UnitSettingsContext";
 import commonConstant from "../common-constant.json";
+import Link from "next/link";
 
 export default function Header() {
   const { unitSettings, setUnitSettingsContext } =
@@ -41,6 +42,11 @@ export default function Header() {
   return (
     <header>
       <img src="/assets/images/logo.svg" alt="weather-now-logo" />
+      <div className="nav">
+        <Link className="nav__link text-preset-7" href={"/"}>Weather</Link>
+        <Link className="nav__link text-preset-7" href={"/about"}>About</Link>
+        <Link className="nav__link text-preset-7" href={"/compare-weather"}>Compare</Link>
+      </div>
       <div className="unit-dropdown">
         <button
           className="unit-dropdown__btn"

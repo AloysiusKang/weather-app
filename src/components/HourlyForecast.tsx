@@ -4,8 +4,9 @@ import { UnitSettingsContext, UnitSettingsContextType } from '../context/UnitSet
 import { format } from 'date-fns';
 import { fetchWeatherApi } from 'openmeteo';
 import commonConstant from "../common-constant.json"
-import styles from "../../assets/css/HourlyForecast.module.css"
+import styles from "../assets/css/HourlyForecast.module.css"
 import { Location } from './WeatherSearch';
+import { LocationContext } from '@/context/LocationContext';
 
 type HourlyForecast = {
   hour: Date;
@@ -17,10 +18,11 @@ type HourlyForecastProps = {
     location:Location
 }
 
+
 export default function HourlyForecast({location}:HourlyForecastProps) {
     const url = commonConstant.OPEN_API_URL;
     const hasPageRenderedOnce = useRef<Boolean>(false);
-    const {unitSettings, setUnitSettingsContext}:UnitSettingsContextType = useContext(UnitSettingsContext);
+    const {unitSettings}:UnitSettingsContextType = useContext(UnitSettingsContext);
     const [hourlyForecast, setHourlyForecast] = useState<HourlyForecast[]>();
     const hourlyForecastParams = {
         latitude: location.latitude,
