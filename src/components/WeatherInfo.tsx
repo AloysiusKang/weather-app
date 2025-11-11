@@ -8,8 +8,7 @@ import { format } from "date-fns";
 import commonConstant from "../common-constant.json";
 import { weatherCode } from "../utility/weather-code";
 import styles from "../assets/css/WeatherInfo.module.css";
-import { Location } from "./WeatherSearch";
-import { LocationContext } from "@/context/LocationContext";
+import { Location, LocationContext } from "@/context/LocationContext";
 
 type WeatherInfo = {
   current_date: string;

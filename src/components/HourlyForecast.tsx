@@ -5,8 +5,7 @@ import { format } from 'date-fns';
 import { fetchWeatherApi } from 'openmeteo';
 import commonConstant from "../common-constant.json"
 import styles from "../assets/css/HourlyForecast.module.css"
-import { Location } from './WeatherSearch';
-import { LocationContext } from '@/context/LocationContext';
+import { Location, LocationContext } from '@/context/LocationContext';
 
 type HourlyForecast = {
   hour: Date;

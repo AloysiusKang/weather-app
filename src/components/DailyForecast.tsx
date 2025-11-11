@@ -8,8 +8,7 @@ import { format } from "date-fns";
 import { weatherCode } from "../utility/weather-code";
 import commonConstant from "../common-constant.json"
 import styles from "../assets/css/DailyForecast.module.css";
-import { Location } from "./WeatherSearch";
-import { LocationContext } from "@/context/LocationContext";
+import { Location, LocationContext } from "@/context/LocationContext";
 
 type DailyForecast = {
   day: string;
