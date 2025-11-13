@@ -7,6 +7,7 @@
 
 .weather-info__container{
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
   padding: 5rem 1rem;
@@ -21,7 +22,7 @@
   align-items: center;
 }
 .weather-info__temp > img{
-  max-width: 120px;
+  max-width: 90px;
 }
 .weather-info__small-container{
   padding: 1.25rem;

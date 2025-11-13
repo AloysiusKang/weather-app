@@ -8,11 +8,11 @@ import {
 import commonConstant from "../common-constant.json";
 import { useContext, useEffect, useState } from "react";
 import Footer from "../components/Footer";
-import WeatherSearch, {Location} from "../components/WeatherSearch";
+import WeatherSearch from "../components/WeatherSearch";
 import WeatherInfo from "@/components/WeatherInfo";
 import DailyForecast from "@/components/DailyForecast";
 import HourlyForecast from "@/components/HourlyForecast";
-import { getCurrentLocation, LocationContext, LocationContextProvider } from "@/context/LocationContext";
+import { getCurrentLocation, Location, LocationContext, LocationContextProvider } from "@/context/LocationContext";
 
 export default function Home() {
   const {currLocation, setCurrLocation} = useContext(LocationContext);
@@ -27,6 +27,7 @@ export default function Home() {
       <LocationContextProvider>
         <Header />
         <section className={"home"}>
+          <h1 className="text-preset-2 home__title">How's the sky looking today?</h1>
           <WeatherSearch setLocation={setLocation}/>
           <WeatherInfo location={location}/>
           <DailyForecast location={location}/>

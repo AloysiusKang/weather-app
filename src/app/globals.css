@@ -300,6 +300,7 @@ footer a{
   margin-inline: 7rem;
   grid-template-columns: 1fr 1fr 1fr;
   grid-template-areas: 
+    'title title title'
     'cta cta cta'
     'info info hourly'
     'daily daily hourly'
@@ -307,9 +308,15 @@ footer a{
   gap: 2rem;
 }
 
+.home__title{
+  grid-area: title;
+  text-align: center;
+}
+
 @media (max-width: 900px) {
   .home{
     grid-template-areas: 
+      'title'
       'cta'
       'info'
       'daily'
