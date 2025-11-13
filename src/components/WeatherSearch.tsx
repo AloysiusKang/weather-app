@@ -20,7 +20,7 @@ export default function WeatherSearch({setLocation}:WeatherSearchProps) {
       return;
     }
     const res = await axios.get(
-      "https://geocoding-api.open-meteo.com/v1/search",
+      commonConstant.OPEN_GEOCODING_API_URL,
       {
         params: {
           name: params,
