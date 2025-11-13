@@ -1,19 +1,26 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import {
   UnitSettingsContext,
   UnitSettingsContextType,
 } from "../context/UnitSettingsContext";
 import commonConstant from "../common-constant.json";
 import Link from "next/link";
+import {WithIsHidden, useOutsideAlerter} from "../utility/detect-component"
+
+type Dropdown = WithIsHidden<{
+  current_toggle_unit:string
+}>
 
 export default function Header() {
   const { unitSettings, setUnitSettingsContext } =
     useContext<UnitSettingsContextType>(UnitSettingsContext);
-  const [dropdown, setDropdown] = useState({
-    is_dropdown_hidden: true,
+  const [dropdown, setDropdown] = useState<Dropdown>({
+    is_hidden: true,
     current_toggle_unit: commonConstant.TOGGLE_METRIC,
   });
-  const [isDropdownHidden, setIsDropdownHidden] = useState<boolean>(true);
+
+  const dropdownRef = useRef(null);
+  useOutsideAlerter(dropdownRef, setDropdown);
 
   const toggleUnit = async () => {
     if (dropdown.current_toggle_unit === commonConstant.TOGGLE_METRIC) {
@@ -44,16 +51,15 @@ export default function Header() {
       <img src="/assets/images/logo.svg" alt="weather-now-logo" />
       <div className="nav">
         <Link className="nav__link text-preset-7" href={"/"}>Weather</Link>
-        <Link className="nav__link text-preset-7" href={"/about"}>About</Link>
         <Link className="nav__link text-preset-7" href={"/compare-weather"}>Compare</Link>
       </div>
-      <div className="unit-dropdown">
+      <div className="unit-dropdown" ref={dropdown.is_hidden === false ? dropdownRef : null}>
         <button
           className="unit-dropdown__btn"
           onClick={() =>
-            isDropdownHidden
-              ? setIsDropdownHidden(false)
-              : setIsDropdownHidden(true)
+            dropdown.is_hidden
+              ? setDropdown((prev) => ({...prev, is_hidden: false}))
+              : setDropdown((prev) => ({...prev, is_hidden: true}))
           }
         >
           <img src="/assets/images/icon-units.svg" alt="unit-icon" />
@@ -61,7 +67,7 @@ export default function Header() {
           <img src="/assets/images/icon-dropdown.svg" alt="dropdown-icon" />
         </button>
 
-        <div className={`unit-dropdown__content ${isDropdownHidden && "hide"}`}>
+        <div className={`unit-dropdown__content ${dropdown.is_hidden && "hide"}`}>
           <p
             className="unit-dropdown__option text-preset-7"
             onClick={() => toggleUnit()}

@@ -1,20 +1,29 @@
 import axios from "axios";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import styles from "../assets/css/WeatherSearch.module.css";
 import { Location } from "@/context/LocationContext";
+import {useOutsideAlerter, WithIsHidden} from "../utility/detect-component";
+import commonConstant from "../common-constant.json";
 
 type WeatherSearchProps = {
   setLocation:React.Dispatch<React.SetStateAction<Location>>
 }
 
+type LocationInput = WithIsHidden<{
+  input: string;
+}>;
+
 export default function WeatherSearch({setLocation}:WeatherSearchProps) {
-  const [locationInput, setLocationInput] = useState({
+  const searchBarRef = useRef(null);
+  
+  const [locationInput, setLocationInput] = useState<LocationInput>({
     input: "",
     is_hidden: true
   });
-  const [locationSuggestions, setLocationSuggestions] = useState<Location[]>();
-  
 
+  useOutsideAlerter(searchBarRef, setLocationInput);
+
+  const [locationSuggestions, setLocationSuggestions] = useState<Location[]>([]);
   const getLocationInfo = async (params: string) => {
     if(params === ""){
       return;
@@ -59,7 +68,7 @@ export default function WeatherSearch({setLocation}:WeatherSearchProps) {
     <form className={styles["cta"]} onSubmit={(e) => {
       e.preventDefault()
       search()
-    }}>
+    }} ref={locationInput.is_hidden === false ? searchBarRef : null}>
       <div className={`${styles["cta__search-bar"]}`}>
         <input
           className="text-preset-5-medium"
@@ -71,9 +80,12 @@ export default function WeatherSearch({setLocation}:WeatherSearchProps) {
           onChange={(e) => setLocationInput((prev) => ({...prev, input: e.target.value}))}
         />
         <div className={`text-preset-7 ${styles.cta__options} ${locationInput.is_hidden && "hide"}`}>
-          {locationSuggestions?.map((e, index) => (
-            <p onClick={() => setupWeatherLocation(e)} key={index}>{e.name}, {e.country}</p>
-          ))}
+          {
+            locationSuggestions?.length !== 0 ? locationSuggestions?.map((e, index) => (
+            <p onClick={() => setupWeatherLocation(e)} key={index} className={styles["cta__options__text"]}>{e.name}, {e.country}</p>
+            )) : 
+            <p>No location found</p>
+          }
         </div>
       </div>
       <button type="submit" className="btn text-preset-5-medium">

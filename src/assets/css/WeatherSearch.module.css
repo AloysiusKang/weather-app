@@ -38,13 +38,15 @@
   border-radius: .75rem;
   padding: .5rem;
   text-align: left;
-  cursor: pointer;
 }
 .cta__options > p{
   padding: .5rem;
   border-radius: .5rem;
 }
-.cta__options > p:hover{
+.cta__options__text{
+  cursor: pointer;
+}
+.cta__options > .cta__options__text:hover{
   background-color: var(--clr-neutral-700);
   border: 1px solid var(--clr-neutral-600);
 }

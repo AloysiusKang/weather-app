@@ -6,6 +6,7 @@ import { fetchWeatherApi } from 'openmeteo';
 import commonConstant from "../common-constant.json"
 import styles from "../assets/css/HourlyForecast.module.css"
 import { Location, LocationContext } from '@/context/LocationContext';
+import {WithIsHidden, useOutsideAlerter} from "../utility/detect-component";
 
 type HourlyForecast = {
   hour: Date;
@@ -17,6 +18,9 @@ type HourlyForecastProps = {
     location:Location
 }
 
+type DropdownHourly = WithIsHidden<{
+    day_of_forecast:string
+}>
 
 export default function HourlyForecast({location}:HourlyForecastProps) {
     const url = commonConstant.OPEN_API_URL;
@@ -36,10 +40,13 @@ export default function HourlyForecast({location}:HourlyForecastProps) {
       };
 
     // Dropdown
-    const [dropdownHourly, setDropdownHourly] = useState({
+    const [dropdownHourly, setDropdownHourly] = useState<DropdownHourly>({
         day_of_forecast: "",
-        is_dropdown_hidden: true
+        is_hidden: true
     });
+    const dropdownHourlyRef = useRef(null);
+    useOutsideAlerter(dropdownHourlyRef, setDropdownHourly);
+
     const week: Array<string> = commonConstant.DROPDOWN_WEEK;
 
     const getHourlyForecast = async (
@@ -99,15 +106,15 @@ export default function HourlyForecast({location}:HourlyForecastProps) {
     
         const toggleDropdown = () => {
         setDropdownHourly((oldDropdown) => {
-            if(oldDropdown.is_dropdown_hidden){
+            if(oldDropdown.is_hidden){
             return ({
                 ...oldDropdown,
-                is_dropdown_hidden: false
+                is_hidden: false
             })
             }else{
             return ({
                 ...oldDropdown,
-                is_dropdown_hidden: true
+                is_hidden: true
             })
             }
         })
@@ -139,32 +146,32 @@ export default function HourlyForecast({location}:HourlyForecastProps) {
     <section className={styles["hourly-forecast"]}>
         <div className={styles["hourly-forecast__header"]}>
             <h2 className="text-preset-5">Hourly forecast</h2>
-            <div className={styles["hourly-forecast__dropdown"]}>
-            <button
-                type="button"
-                className={`text-preset-7 ${styles["btn-dropdown"]}`}
-                onClick={() => toggleDropdown()}
-            >
-                {dropdownHourly.day_of_forecast}
-                <img src="/assets/images/icon-dropdown.svg" alt="" />
-            </button>
-            <div
-                id="hourly-forecast__dropdown"
-                className={`${styles["hourly-forecast__dropdown-content"]} text-preset-7 ${dropdownHourly.is_dropdown_hidden && "hide"}`}
-            >
-                {week.map((day, index) => (
-                <p
-                    onClick={() => {
-                    toggleDropdown();
-                    return getHourlyForecast(url, day);
-                    }}
-                    className={ day === dropdownHourly.day_of_forecast ? (styles["hourly-forecast__dropdown-active"]) : ""}
-                    key={index}
+            <div className={styles["hourly-forecast__dropdown"]} ref={dropdownHourly.is_hidden === false ? dropdownHourlyRef : null}>
+                <button
+                    type="button"
+                    className={`text-preset-7 ${styles["btn-dropdown"]}`}
+                    onClick={() => toggleDropdown()}
                 >
-                    {day}
-                </p>
-                ))}
-            </div>
+                    {dropdownHourly.day_of_forecast}
+                    <img src="/assets/images/icon-dropdown.svg" alt="" />
+                </button>
+                <div
+                    id="hourly-forecast__dropdown"
+                    className={`${styles["hourly-forecast__dropdown-content"]} text-preset-7 ${dropdownHourly.is_hidden && "hide"}`}
+                >
+                    {week.map((day, index) => (
+                    <p
+                        onClick={() => {
+                        toggleDropdown();
+                        return getHourlyForecast(url, day);
+                        }}
+                        className={ day === dropdownHourly.day_of_forecast ? (styles["hourly-forecast__dropdown-active"]) : ""}
+                        key={index}
+                    >
+                        {day}
+                    </p>
+                    ))}
+                </div>
             </div>
         </div>
         {hourlyForecast?.map((hourly, index) => (
