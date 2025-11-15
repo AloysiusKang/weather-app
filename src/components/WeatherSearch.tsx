@@ -25,7 +25,9 @@ export default function WeatherSearch({setLocation}:WeatherSearchProps) {
 
   const [locationSuggestions, setLocationSuggestions] = useState<Location[]>([]);
   const getLocationInfo = async (params: string) => {
+    console.log(params)
     if(params === ""){
+      setLocationSuggestions([]);
       return;
     }
     const res = await axios.get(
@@ -50,7 +52,7 @@ export default function WeatherSearch({setLocation}:WeatherSearchProps) {
 
   const setupWeatherLocation = async (l:Location) => {
     setLocation(l);
-    setLocationInput((e) => ({...e, is_hidden: true}))
+    setLocationInput((e) => ({input: "", is_hidden: true}))
   }
 
   const search = async () => {
