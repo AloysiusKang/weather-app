@@ -1,0 +1,6 @@
+services:
+  website:
+    build: .
+    command: npm run start
+    ports: 
+     - 4200:4200
